@@ -23,11 +23,22 @@ public class User {
     @SerializedName("created_at")
     @Expose
     private String createdAt;
-
+    @SerializedName("followers")
+    @Expose
+    private Integer followers;
+    @SerializedName("public_repos")
+    @Expose
+    private Integer public_repos;
     private int calculations;
 
-    public User() {
-        calculations = 6 / 2 * (2 + 1);
+    public User(String login, Integer id, String avatarUrl, String type, String name, String createdAt) {
+        this.login = login;
+        this.id = id;
+        this.avatarUrl = avatarUrl;
+        this.type = type;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.calculations = 6 / 2 * (2 + 1);
     }
 
     public String getLogin() {
@@ -84,5 +95,21 @@ public class User {
 
     public void setCalculations(int calculations) {
         this.calculations = calculations;
+    }
+
+    public Integer getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Integer followers) {
+        this.followers = followers;
+    }
+
+    public Integer getPublic_repos() {
+        return public_repos;
+    }
+
+    public void setPublic_repos(Integer public_repos) {
+        this.public_repos = public_repos;
     }
 }

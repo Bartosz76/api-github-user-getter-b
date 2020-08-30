@@ -3,6 +3,7 @@ package theapp.service;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
 import theapp.config.Connector;
 import theapp.config.Constants;
 import theapp.model.User;
@@ -22,9 +23,10 @@ public class UserService {
 
     public static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public User fetchUser() throws IOException {
 
-        URL url = new URL("https://api.github.com/users");
+    public User fetchUser(@PathVariable String endPoint) throws IOException {
+
+        URL url = new URL("https://api.github.com/users/" + endPoint);
         InputStreamReader reader = new InputStreamReader(url.openStream());
 
         User user = new Gson().fromJson(reader, User.class);
