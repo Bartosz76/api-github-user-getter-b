@@ -30,6 +30,7 @@ public class UserService {
         InputStreamReader reader = new InputStreamReader(url.openStream());
 
         User user = new Gson().fromJson(reader, User.class);
+        getCalculationsForUser(user);
         if (user == null) {
             logger.error("Could not return desired output.");
             return null;
@@ -39,7 +40,13 @@ public class UserService {
         }
     }
 
+    private Integer getCalculationsForUser(User user){
+        user.setCalculations((6 / user.getFollowers()) * (2 + user.getPublic_repos()));
+        return user.getCalculations();
+    }
+
     public void insertRecord(String login) {
+        //this part checks if there is a login like that in the database already
         String sql = "select * from calls where LOGIN = ?";
         PreparedStatement preparedStatement;
         ResultSet resultSet;
@@ -47,6 +54,7 @@ public class UserService {
             preparedStatement = getConnection().prepareStatement(sql);
             preparedStatement.setString(1, login);
             resultSet = preparedStatement.executeQuery();
+            //if there's a result - I am trying to increment the value of REQUEST_COUNT column by 1.
             if (resultSet.next()) {
                 String updateSql = "update calls set REQUEST_COUNT = REQUEST_COUNT + 1 where login = ?";
                 PreparedStatement updatePreparedStatement;
@@ -57,11 +65,12 @@ public class UserService {
                     logger.error("Could not insert a record into the database.");
                     e.printStackTrace();
                 }
+                //if there is no result - I want to insert a new record.
             } else {
                 String insertSql = "insert into calls (LOGIN, REQUEST_COUNT) values (?, ?)";
                 try (final PreparedStatement insertPreparedStatement = getConnection().prepareStatement(insertSql)) {
                     insertPreparedStatement.setString(1, login);
-                    insertPreparedStatement.setInt(1, 1);
+                    insertPreparedStatement.setInt(2, 1);
                 } catch (SQLException e) {
                     logger.error("Could not insert a record into the database.");
                     e.printStackTrace();

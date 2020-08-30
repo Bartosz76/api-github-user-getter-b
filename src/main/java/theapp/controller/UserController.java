@@ -21,9 +21,7 @@ public class UserController {
 
     @GetMapping("/user/info/{login}")
     public User getUser(@PathVariable String login) throws IOException {
-//        userService.insertRecord();
+        userService.insertRecord(login);
         return userService.fetchUser(login);
     }
-
-
 }

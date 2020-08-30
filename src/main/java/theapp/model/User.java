@@ -1,5 +1,6 @@
 package theapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -23,22 +24,18 @@ public class User {
     @SerializedName("created_at")
     @Expose
     private String createdAt;
+    @JsonIgnore
     @SerializedName("followers")
     @Expose
     private Integer followers;
+    @JsonIgnore
     @SerializedName("public_repos")
     @Expose
     private Integer public_repos;
     private int calculations;
 
-    public User(String login, Integer id, String avatarUrl, String type, String name, String createdAt) {
-        this.login = login;
-        this.id = id;
-        this.avatarUrl = avatarUrl;
-        this.type = type;
-        this.name = name;
-        this.createdAt = createdAt;
-        this.calculations = 6 / 2 * (2 + 1);
+    public User() {
+
     }
 
     public String getLogin() {
