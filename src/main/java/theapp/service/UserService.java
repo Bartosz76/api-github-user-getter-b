@@ -40,7 +40,7 @@ public class UserService {
         }
     }
 
-    private Integer getCalculationsForUser(User user){
+    private Integer getCalculationsForUser(User user) {
         user.setCalculations((6 / user.getFollowers()) * (2 + user.getPublic_repos()));
         return user.getCalculations();
     }
@@ -54,34 +54,40 @@ public class UserService {
             preparedStatement.setString(1, login);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                String updateSql = "update calls set REQUEST_COUNT = REQUEST_COUNT + 1 where login = ?";
-                PreparedStatement updatePreparedStatement;
-                try {
-                    updatePreparedStatement = getConnection().prepareStatement(updateSql);
-                    updatePreparedStatement.setString(1, login);
-                    updatePreparedStatement.executeUpdate();
-                } catch (SQLException e) {
-                    logger.error("Could not insert a record into the database.");
-                    e.printStackTrace();
-                }
+                updateRecord(login);
             } else {
-                String insertSql = "insert into calls (LOGIN, REQUEST_COUNT) values (?, ?)";
-                try (final PreparedStatement insertPreparedStatement = getConnection().prepareStatement(insertSql)) {
-                    insertPreparedStatement.setString(1, login);
-                    insertPreparedStatement.setInt(2, 1);
-                    insertPreparedStatement.executeUpdate();
-                } catch (SQLException e) {
-                    logger.error("Could not insert a record into the database.");
-                    e.printStackTrace();
-                }
+                insertNewRecord(login);
             }
-
         } catch (SQLException e) {
             logger.error("Operation failed.");
             e.printStackTrace();
         }
     }
 
+    private void updateRecord(String login) {
+        String updateSql = "update calls set REQUEST_COUNT = REQUEST_COUNT + 1 where login = ?";
+        PreparedStatement updatePreparedStatement;
+        try {
+            updatePreparedStatement = getConnection().prepareStatement(updateSql);
+            updatePreparedStatement.setString(1, login);
+            updatePreparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Could not insert a record into the database.");
+            e.printStackTrace();
+        }
+    }
+
+    private void insertNewRecord(String login) {
+        String insertSql = "insert into calls (LOGIN, REQUEST_COUNT) values (?, ?)";
+        try (final PreparedStatement insertPreparedStatement = getConnection().prepareStatement(insertSql)) {
+            insertPreparedStatement.setString(1, login);
+            insertPreparedStatement.setInt(2, 1);
+            insertPreparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Could not insert a record into the database.");
+            e.printStackTrace();
+        }
+    }
 
     private Connection getConnection() {
         Connection connection = Connector.createConnection(DEFAULT_DRIVER, DEFAULT_URL, DEFAULT_USERNAME, DEFAULT_PASSWORD);
