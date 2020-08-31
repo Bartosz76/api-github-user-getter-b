@@ -46,7 +46,6 @@ public class UserService {
     }
 
     public void insertRecord(String login) {
-        //this part checks if there is a login like that in the database already
         String sql = "select * from calls where LOGIN = ?";
         PreparedStatement preparedStatement;
         ResultSet resultSet;
@@ -54,23 +53,23 @@ public class UserService {
             preparedStatement = getConnection().prepareStatement(sql);
             preparedStatement.setString(1, login);
             resultSet = preparedStatement.executeQuery();
-            //if there's a result - I am trying to increment the value of REQUEST_COUNT column by 1.
             if (resultSet.next()) {
                 String updateSql = "update calls set REQUEST_COUNT = REQUEST_COUNT + 1 where login = ?";
                 PreparedStatement updatePreparedStatement;
                 try {
                     updatePreparedStatement = getConnection().prepareStatement(updateSql);
                     updatePreparedStatement.setString(1, login);
+                    updatePreparedStatement.executeUpdate();
                 } catch (SQLException e) {
                     logger.error("Could not insert a record into the database.");
                     e.printStackTrace();
                 }
-                //if there is no result - I want to insert a new record.
             } else {
                 String insertSql = "insert into calls (LOGIN, REQUEST_COUNT) values (?, ?)";
                 try (final PreparedStatement insertPreparedStatement = getConnection().prepareStatement(insertSql)) {
                     insertPreparedStatement.setString(1, login);
                     insertPreparedStatement.setInt(2, 1);
+                    insertPreparedStatement.executeUpdate();
                 } catch (SQLException e) {
                     logger.error("Could not insert a record into the database.");
                     e.printStackTrace();
